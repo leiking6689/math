@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数的大小比较 · 四大方法互动课</title>
+<style>
+:root{
+  --bg:#F7F8FF; --primary:#5B6CFF; --yellow:#FFD166; --pink:#FF7AB6;
+  --green:#55C59D; --ink:#1F2433; --card:#FFFFFF; --muted:#6B7194;
+  --line:#E5E8FA; --red:#F45B69; --blue-soft:#EEF0FF; --pink-soft:#FFEEF6;
+  --green-soft:#E8F8F2; --yellow-soft:#FFF7E0;
+  --radius:18px;
+  --shadow:0 8px 24px rgba(91,108,255,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Nunito","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px;margin:0 auto;padding:0 18px}
+
+.hero{
+  background:linear-gradient(135deg,#55C59D 0%,#5B6CFF 100%);
+  color:#fff; padding:54px 18px 70px; position:relative; overflow:hidden;
+}
+.hero::after{
+  content:"a ? b"; position:absolute; right:-10px; bottom:-30px;
+  font-size:150px; font-weight:800; color:rgba(255,255,255,.10); letter-spacing:-4px;
+}
+.hero .wrap{position:relative; z-index:1}
+.hero .tag{
+  display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35);
+  border-radius:999px; padding:4px 14px; font-size:13px; margin-bottom:16px;
+}
+.hero h1{font-size:clamp(26px,5vw,40px); font-weight:800; line-height:1.3; margin-bottom:12px}
+.hero p{font-size:16px; max-width:660px; opacity:.95}
+.hero .meta{margin-top:18px; font-size:13.5px; opacity:.85}
+
+.topics{background:#fff; border-bottom:1px solid var(--line); position:relative; z-index:40}
+.topics .wrap{display:flex; gap:10px; flex-wrap:wrap; padding:14px 18px; align-items:center}
+.topics .tlabel{font-size:13px; font-weight:800; color:var(--muted); letter-spacing:1px}
+.topic-tab{
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+  border:2px solid var(--line); background:#fff; color:var(--ink);
+  border-radius:12px; padding:9px 18px; font-size:14.5px; font-weight:800;
+  transition:all .2s; font-family:inherit;
+}
+.topic-tab:hover{border-color:var(--primary); transform:translateY(-1px)}
+.topic-tab.active{background:var(--green); border-color:var(--green); color:#fff;
+  box-shadow:0 6px 14px rgba(85,197,157,.35); cursor:default}
+.topic-tab .tn{background:rgba(255,255,255,.25); border-radius:8px; width:24px; height:24px;
+  display:inline-flex; align-items:center; justify-content:center; font-size:13px}
+.topic-tab:not(.active) .tn{background:var(--green-soft); color:#176e50}
+
+.pathnav{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+.pathnav .wrap{display:flex; gap:6px; overflow-x:auto; padding:10px 12px}
+.pathnav a{flex:0 0 auto; display:flex; align-items:center; gap:7px; text-decoration:none;
+  color:var(--muted); font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px; transition:all .2s}
+.pathnav a .dot{width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex:0 0 22px; transition:all .25s}
+.pathnav a.active{background:var(--green-soft); color:#176e50}
+.pathnav a.active .dot{background:var(--green); color:#fff}
+.pathnav a.done .dot{background:var(--green); color:#fff}
+
+main{padding:36px 0 60px}
+.station{margin-bottom:44px}
+.station-head{display:flex; align-items:center; gap:14px; margin-bottom:16px}
+.badge{width:46px;height:46px;border-radius:14px;flex:0 0 46px;
+  background:var(--green);color:#fff;font-weight:800;font-size:18px;
+  display:flex;align-items:center;justify-content:center; box-shadow:0 6px 14px rgba(85,197,157,.35)}
+.station-head h2{font-size:clamp(20px,3.4vw,26px); font-weight:800}
+.station-head .sub{color:var(--muted); font-size:14px; font-weight:600}
+.card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:22px 24px; margin-bottom:16px; border:1px solid rgba(229,232,250,.7)}
+.card h3{font-size:17px; margin-bottom:10px; font-weight:800}
+.card p{margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.lead{font-size:15.5px}
+
+.f{font-family:"Times New Roman",Georgia,"STKaiti",serif; font-size:1.12em; font-weight:600; white-space:nowrap}
+.formula-box{background:var(--bg); border:1px dashed #C8CDF5; border-radius:12px;
+  padding:14px 18px; text-align:center; margin:12px 0; font-size:18px;
+  font-family:"Times New Roman",Georgia,serif; font-weight:600; overflow-x:auto}
+
+.note{border-radius:12px; padding:14px 18px; margin:12px 0; font-size:14.5px}
+.note .t{font-weight:800; display:block; margin-bottom:4px}
+.note.blue{background:var(--blue-soft); border-left:4px solid var(--primary)}
+.note.pink{background:var(--pink-soft); border-left:4px solid var(--pink)}
+.note.green{background:var(--green-soft); border-left:4px solid var(--green)}
+.note.yellow{background:var(--yellow-soft); border-left:4px solid #E8B93C}
+.note.red{background:#FEECEE; border-left:4px solid var(--red)}
+
+/* 方法卡 */
+.methods{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:14px 0}
+.mcard{border-radius:14px; padding:16px 18px; background:#fff; border:2px solid var(--line); transition:all .2s}
+.mcard:hover{transform:translateY(-2px); box-shadow:var(--shadow)}
+.mcard .mno{display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
+  border-radius:9px; font-weight:800; font-size:15px; color:#fff; margin-bottom:8px}
+.mcard:nth-child(1) .mno{background:var(--primary)}
+.mcard:nth-child(2) .mno{background:var(--pink)}
+.mcard:nth-child(3) .mno{background:var(--green)}
+.mcard:nth-child(4) .mno{background:#E8B93C}
+.mcard h4{font-size:16px; font-weight:800; margin-bottom:4px}
+.mcard p{font-size:13.5px; color:var(--muted); margin:0}
+
+/* lab */
+.lab{background:linear-gradient(180deg,#FBFCFF,#F4F6FF); border:1px solid var(--line);
+  border-radius:14px; padding:10px 8px 4px; margin:14px 0}
+.lab svg{display:block; width:100%; height:auto; touch-action:none; user-select:none}
+.lab .readout{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:8px 10px 12px}
+.chip{background:#fff; border:2px solid var(--line); border-radius:999px; padding:5px 14px;
+  font-size:14px; font-weight:700; font-family:"Times New Roman",Georgia,serif}
+.chip b{font-family:"Nunito","PingFang SC",sans-serif}
+.chip.pos{border-color:var(--primary); color:var(--primary); background:var(--blue-soft)}
+.chip.neg{border-color:var(--pink); color:#D94D8C; background:var(--pink-soft)}
+.chip.zero{border-color:#E8B93C; color:#B8891A; background:var(--yellow-soft)}
+.chip.ok{border-color:var(--green); color:#176e50; background:var(--green-soft)}
+.chip.bad{border-color:var(--red); color:#c43744; background:#FEECEE}
+.drag-tip{text-align:center; font-size:12.5px; color:var(--muted); padding-bottom:8px}
+
+/* 排序台阶 */
+.stairs{display:flex; align-items:flex-end; justify-content:center; gap:10px; margin:16px 0 6px; flex-wrap:wrap}
+.stair{display:flex; flex-direction:column; align-items:center; gap:6px; min-width:74px;
+  transition:all .35s ease; order:0}
+.stair .bar{width:74px; border-radius:10px 10px 0 0; display:flex; align-items:flex-start; justify-content:center;
+  padding-top:8px; color:#fff; font-weight:800; font-family:"Times New Roman",Georgia,serif; font-size:16px;
+  transition:all .35s}
+.stair .lab2{font-size:12.5px; font-weight:700; color:var(--muted)}
+.stair .val{font-size:13.5px; font-weight:800; font-family:"Times New Roman",Georgia,serif}
+
+/* 作业本 */
+.workbook{background:#FFFDF5; border:1.5px solid #EAD9A8; border-radius:12px;
+  padding:18px 20px; margin:14px 0;
+  font-family:"STKaiti","KaiTi","Kaiti SC",Georgia,serif; font-size:16.5px; line-height:2.05; color:#2b2b2b;
+  background-image:repeating-linear-gradient(transparent,transparent 33px,#F0E6C8 33px,#F0E6C8 34px)}
+.workbook .red{color:var(--red); font-weight:700}
+.workbook .blue{color:var(--primary); font-weight:700}
+.workbook .green{color:#176e50; font-weight:700}
+
+/* quiz */
+.quiz{border:2px solid var(--line); border-radius:16px; padding:18px 20px; margin-bottom:18px; transition:border-color .3s}
+.quiz.unlocked{border-color:var(--green)}
+.quiz .qhead{display:flex; gap:10px; align-items:center; margin-bottom:8px}
+.qno{background:var(--yellow); color:#7a5b00; font-weight:800; border-radius:10px;
+  padding:3px 12px; font-size:13.5px; flex:0 0 auto}
+.qno.hard{background:var(--pink); color:#8a2452}
+.quiz .qtitle{font-weight:800; font-size:15.5px}
+.qstep{margin:12px 0; padding-left:6px; border-left:3px solid var(--line)}
+.qstep.active{border-left-color:var(--green)}
+.qstep.done{border-left-color:var(--green)}
+.qstep .qq{font-weight:700; margin-bottom:8px; font-size:14.5px}
+.opts{display:flex; flex-wrap:wrap; gap:8px}
+.opt{border:2px solid var(--line); background:#fff; border-radius:10px; padding:8px 16px;
+  font-size:14.5px; font-weight:700; cursor:pointer; font-family:"Times New Roman",Georgia,serif; transition:all .15s}
+.opt:hover{border-color:var(--green)}
+.opt.correct{background:var(--green-soft); border-color:var(--green); color:#1c8a63}
+.opt.wrong{background:#FEECEE; border-color:var(--red); color:#c43744}
+.opt:disabled{cursor:default; opacity:.85}
+.qexplain{font-size:13.5px; margin-top:8px; border-radius:8px; padding:8px 12px; display:none}
+.qexplain.show{display:block}
+.qexplain.ok{background:var(--green-soft); color:#176e50}
+.qexplain.no{background:#FEECEE; color:#b2313f}
+.solution{display:none; margin-top:12px}
+.solution.show{display:block}
+
+/* 错题医院 */
+.case{border:2px solid #F3C2C8; border-radius:14px; padding:16px 18px; margin:14px 0; background:#FFF8F8}
+.case .causetitle{font-weight:800; color:var(--red); font-size:14px; margin-bottom:6px}
+.case .wb{background:#fff; border:1px dashed #E5A8AF; border-radius:10px; padding:12px 16px;
+  font-family:"STKaiti","KaiTi",Georgia,serif; font-size:16px; line-height:2}
+.bug{background:#FFE0E4; border-bottom:2px wavy var(--red); cursor:pointer; border-radius:4px; padding:0 3px}
+.bug.found{background:var(--red); color:#fff}
+.diag{display:none; margin-top:10px; background:var(--green-soft); border-radius:10px; padding:12px 14px; font-size:14px}
+.diag.show{display:block}
+.diag b{color:#176e50}
+
+.mantras{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:14px 0}
+.mantra{background:#fff; border-radius:14px; padding:14px 16px; box-shadow:var(--shadow);
+  border-top:4px solid var(--primary); display:flex; gap:12px; align-items:flex-start}
+.mantra:nth-child(2){border-top-color:var(--pink)}
+.mantra:nth-child(3){border-top-color:var(--green)}
+.mantra:nth-child(4){border-top-color:#E8B93C}
+.mantra .n{font-size:22px; font-weight:800; color:var(--primary); flex:0 0 30px}
+.mantra p{font-size:14.5px; font-weight:600; margin:0}
+
+.summary-card{background:linear-gradient(135deg,#55C59D,#5B6CFF); color:#fff;
+  border-radius:var(--radius); padding:28px 26px; box-shadow:var(--shadow)}
+.summary-card h2{font-size:22px; margin-bottom:14px}
+.summary-card ol{padding-left:22px; font-size:15.5px}
+.summary-card li{margin-bottom:8px}
+.summary-card .hl{background:rgba(255,209,102,.92); color:#5c4400; padding:1px 8px; border-radius:6px; font-weight:800}
+
+footer{text-align:center; color:var(--muted); font-size:13px; padding:24px 18px 40px}
+button:focus-visible,a:focus-visible{outline:3px solid var(--green); outline-offset:2px; border-radius:6px}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+}
+@media (max-width:680px){
+  .methods,.mantras{grid-template-columns:1fr}
+  .card{padding:18px 16px}
+  .workbook{font-size:15px; padding:14px}
+  .formula-box{font-size:15px}
+}
+@media print{
+  .pathnav,.drag-tip,.topics{display:none !important}
+  body{background:#fff}
+  .card,.quiz,.case{box-shadow:none; border:1px solid #ccc; break-inside:avoid}
+  .solution{display:block !important}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="tag">沪教版有理数 · 六升七 / 七年级 · 四大比较方法一次通关</span>
+    <h1>数的大小比较：四大方法</h1>
+    <p>选择题里 a、b 字母到底谁大？<b>特殊值法、测试点法、作差法、作商法</b>——拖一拖、点一点，学会"什么题型用哪把钥匙"。</p>
+    <div class="meta">互动学习路径 · 7 站约 20 分钟 · 手机 / 电脑 / 平板均可 · 离线可用</div>
+  </div>
+</header>
+
+<span id="goto-t1"></span>
+<nav class="topics" aria-label="专题导引">
+  <div class="wrap">
+    <span class="tlabel">🧭 专题导引</span>
+    <a class="topic-tab" href="#goto-t1" data-goto="jueduizhi-huajian.html"><span class="tn">1</span>绝对值化简：分类讨论思想</a>
+    <span class="topic-tab active"><span class="tn">2</span>数的大小比较：四大方法</span>
+  </div>
+</nav>
+
+<nav class="pathnav" aria-label="学习路径">
+  <div class="wrap" id="pathnav">
+    <a href="#s0"><span class="dot">0</span>基本法则</a>
+    <a href="#s1"><span class="dot">1</span>特殊值法</a>
+    <a href="#s2"><span class="dot">2</span>测试点法</a>
+    <a href="#s3"><span class="dot">3</span>作差法</a>
+    <a href="#s4"><span class="dot">4</span>作商法</a>
+    <a href="#s5"><span class="dot">5</span>闯关练习</a>
+    <a href="#s6"><span class="dot">6</span>口诀与错题医院</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ 站0 ============ -->
+<section class="station" id="s0">
+  <div class="station-head">
+    <div class="badge">0</div>
+    <div><h2>基本法则：数轴就是"大小秤"</h2><div class="sub">先认清数的大小"地形"</div></div>
+  </div>
+  <div class="card">
+    <h3>四条基本法则</h3>
+    <div class="note blue"><span class="t">① 数轴法则</span>数轴上的数，<b>越往右越大</b>。正数 &gt; 0 &gt; 负数。</div>
+    <div class="note pink"><span class="t">② 两个负数比大小</span><b>绝对值大的反而小</b>。例如 −5 和 −3：|−5|=5 &gt; 3=|−3|，所以 −5 &lt; −3。（负得越多，离 0 越远，位置越靠左）</div>
+    <div class="note green"><span class="t">③ 正数 vs 负数</span>正数 <b>永远大于</b>负数，不用算。</div>
+    <div class="note yellow"><span class="t">④ 字母题为什么难？</span>a、b 的正负不确定时，法则用不上——这时就要请出四大方法。</div>
+
+    <h3 style="margin-top:16px">实验：拖动 a，看 a、−a、|a| 谁大谁小</h3>
+    <p class="lead">注意观察 a 穿过原点的一瞬间，<b>−a 的位置"跳"到哪边去了</b>：</p>
+    <div class="lab">
+      <div id="lab0"></div>
+      <div class="readout" id="readout0"></div>
+      <div class="drag-tip">👆 拖动蓝色点 a，粉色点 −a、绿色点 |a| 会跟着动</div>
+    </div>
+    <div class="note red">
+      <span class="t">🚫 经典坑：−a 一定是负数吗？</span>
+      拖到 a=−2 试试：−a = 2，是正数！<b>当 a&lt;0 时，−a &gt; a</b>（和直觉相反）。这就是字母题必须用方法的原因——别用"感觉"比大小。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 站1 特殊值法 ============ -->
+<section class="station" id="s1">
+  <div class="station-head">
+    <div class="badge">1</div>
+    <div><h2>方法一：特殊值法</h2><div class="sub">选择题神器：把字母换成数，答案立刻现形</div></div>
+  </div>
+  <div class="card">
+    <h3>什么时候用？</h3>
+    <p class="lead">题目里全是字母（a、b、x……），又给了范围或条件，让你<b>比较大小或排序</b>——而且是<b>选择、填空</b>题。做法：在范围内取一个好算的数，代进去算出每个式子的值，直接排。</p>
+    <div class="note yellow"><span class="t">⚠️ 三条军规</span>
+      1）取值<b>必须在题目范围内</b>；2）选<b>好算</b>的数（整数优先，避开 0、±1 边界）；3）<b>只适用于选择填空</b>——解答题用特殊值会被扣分（不能代替证明）！</div>
+
+    <h3 style="margin-top:14px">例题：若 0 &lt; a &lt; 1，比较 a、a²、1/a 的大小</h3>
+    <p class="lead">取特殊值 <b>a = 0.5</b>，点按钮看三个数算出来怎么排队：</p>
+    <div class="stairs" id="stairs1"></div>
+    <div style="text-align:center;margin:10px 0">
+      <button class="step-btn" id="btn1" style="border:2px solid var(--green);background:#fff;border-radius:999px;padding:9px 22px;font-size:14.5px;font-weight:800;color:#176e50;cursor:pointer;font-family:inherit">▶ 代入 a = 0.5 计算并排序</button>
+      <button class="step-btn" id="btn1r" style="border:2px solid var(--line);background:#fff;border-radius:999px;padding:9px 22px;font-size:14.5px;font-weight:800;color:var(--muted);cursor:pointer;font-family:inherit;margin-left:8px">↺ 重置</button>
+    </div>
+    <div class="note green" id="note1" style="display:none">
+      <span class="t">✅ 结论</span>
+      a² = 0.25 &lt; a = 0.5 &lt; 1/a = 2，即 <b>a² &lt; a &lt; 1/a</b>。<br>
+      🧠 记住这个模型：<b>0 到 1 之间的数，平方变小、倒数变大</b>（越乘越"缩水"，除以小数反而变大）。
+    </div>
+    <div class="workbook">
+      <span class="blue">【特殊值法书写示范】</span><br>
+      解：取 a = 1/2（在 0 &lt; a &lt; 1 范围内），<br>
+      　则 a² = (1/2)² = <span class="red">1/4</span>，1/a = 1÷(1/2) = <span class="red">2</span>，<br>
+      　∵ 1/4 &lt; 1/2 &lt; 2，∴ <span class="green">a² &lt; a &lt; 1/a</span>。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 站2 测试点法 ============ -->
+<section class="station" id="s2">
+  <div class="station-head">
+    <div class="badge">2</div>
+    <div><h2>方法二：测试点法</h2><div class="sub">范围分几段，就取几个点试</div></div>
+  </div>
+  <div class="card">
+    <h3>什么时候用？</h3>
+    <p class="lead">题目给了<b>取值范围或分段条件</b>（如数轴上 a、b 的位置已知，或 |a|&gt;|b| 这类条件），在每一段里取一个<b>代表数</b>代入验证。和专题 1 的"各段定号"是同一个思想。</p>
+
+    <h3 style="margin-top:14px">实验：已知 −1 &lt; a &lt; 0 &lt; 1 &lt; b，比较 a、b、−a、−b、a+b</h3>
+    <p class="lead">拖动 a（只能在 −1 和 0 之间）和 b（在 1 右边），看五个数在数轴上的实时排位：</p>
+    <div class="lab">
+      <div id="lab2"></div>
+      <div class="readout" id="readout2"></div>
+      <div class="drag-tip">👆 蓝点 = a（负区间），紫点 = b（正区间），都可拖动</div>
+    </div>
+    <div class="note blue">
+      <span class="t">✅ 结论（取测试点 a=−0.5，b=2 验证）</span>
+      −b = −2 &lt; a = −0.5 &lt; −a = 0.5 &lt; b = 2；而 a+b = 1.5，介于 −a 与 b 之间。<br>
+      ∴ 排序：<b>−b &lt; a &lt; −a &lt; a+b &lt; b</b>。
+    </div>
+    <div class="note pink">
+      <span class="t">📌 方法要点</span>
+      范围涉及几段，就在<b>每段各取一个好算的测试点</b>（如 a=−1/2、b=2）；排序结论在整段范围内<b>保持不变</b>（只要条件不变号）。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 站3 作差法 ============ -->
+<section class="station" id="s3">
+  <div class="station-head">
+    <div class="badge">3</div>
+    <div><h2>方法三：作差法</h2><div class="sub">a − b 的正负定胜负（解答题首选，最严谨）</div></div>
+  </div>
+  <div class="card">
+    <div class="formula-box">
+      a − b &gt; 0 ⇔ a &gt; b；　a − b = 0 ⇔ a = b；　a − b &lt; 0 ⇔ a &lt; b
+    </div>
+    <h3>什么时候用？</h3>
+    <p class="lead"><b>万能方法</b>，尤其适合<b>解答题</b>（要写过程证明）。作差后关键是判断差的正负——常用<b>配方法</b>或因式分解。</p>
+
+    <h3 style="margin-top:14px">例题：比较 x²+4 与 4x 的大小</h3>
+    <div class="workbook">
+      解：作差：(x²+4) − 4x<br>
+      　= x² − 4x + 4<br>
+      　= <span class="red">(x−2)²</span>　（配成完全平方！）<br>
+      　∵ 任何数的平方都 ≥ 0，∴ (x−2)² ≥ 0，<br>
+      　∴ <span class="green">x²+4 ≥ 4x</span>，当 x=2 时等号成立。
+    </div>
+
+    <h3>实验：拖动 x，看差值 (x²+4) − 4x 何时为 0</h3>
+    <div class="lab">
+      <div id="lab3"></div>
+      <div class="readout" id="readout3"></div>
+      <div class="drag-tip">👆 拖动蓝点 x，紫色曲线是差值 (x²+4)−4x=(x−2)²——永远不低于 0，只在 x=2 时碰到 0</div>
+    </div>
+    <div class="note green">
+      <span class="t">🌟 判号三件套</span>
+      作差之后：① <b>配方</b>成完全平方（≥0）；② <b>因式分解</b>看每个因子正负；③ 实在不行就<b>分类讨论</b>（回到专题 1 的思想）。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 站4 作商法 ============ -->
+<section class="station" id="s4">
+  <div class="station-head">
+    <div class="badge">4</div>
+    <div><h2>方法四：作商法</h2><div class="sub">两个正数比大小，看商比 1 大还是小</div></div>
+  </div>
+  <div class="card">
+    <div class="formula-box">
+      当 a、b <b>都是正数</b>时：a/b &gt; 1 ⇔ a &gt; b；a/b = 1 ⇔ a = b；a/b &lt; 1 ⇔ a &lt; b
+    </div>
+    <h3>什么时候用？</h3>
+    <p class="lead">两个数<b>都是正数</b>、而且带<b>乘法、幂、分数</b>（如 2³⁰ 与 3²⁰）时，作商能约分化简，比作差好算。</p>
+    <div class="note red">
+      <span class="t">🚫 致命前提：必须同号（正数）！</span>
+      两个<b>负数</b>作商，结论<b>正好反过来</b>（比如 −6 与 −3：商=2&gt;1，但 −6&lt;−3）。一正一负不能用作商法。不确定正负时，老实用作差法。
+    </div>
+
+    <h3 style="margin-top:14px">例题：比较 2³⁰ 与 3²⁰ 的大小</h3>
+    <div class="workbook">
+      解：两数都是正数，作商：<br>
+      　2³⁰ / 3²⁰ = 2⁽²⁰⁺¹⁰⁾ / 3²⁰ = 2¹⁰ × (2/3)²⁰<br>
+      　= 1024 × (2/3)²⁰，<br>
+      　<span class="blue">更聪明的算法：</span>2³⁰ = (2³)¹⁰ = <span class="red">8¹⁰</span>，3²⁰ = (3²)¹⁰ = <span class="red">9¹⁰</span>，<br>
+      　作商 8¹⁰/9¹⁰ = (8/9)¹⁰ &lt; 1，<br>
+      　∴ <span class="green">2³⁰ &lt; 3²⁰</span>。
+    </div>
+
+    <h3>互动：比较 a 与 b（保证正数），拖动看商 a/b 的变化</h3>
+    <div class="lab">
+      <div id="lab4-axis"></div>
+      <div id="lab4-plot"></div>
+      <div class="readout" id="readout4"></div>
+      <div class="drag-tip">👆 拖动 b（a 固定为 6），看商 a/b 落在 1 的哪一侧：商 &gt; 1 则 a &gt; b</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 站5 闯关 ============ -->
+<section class="station" id="s5">
+  <div class="station-head">
+    <div class="badge">5</div>
+    <div><h2>闯关练习</h2><div class="sub">4 关：负数比较 → 特殊值 → 作差 → 选方法</div></div>
+  </div>
+  <div id="quiz-zone"></div>
+</section>
+
+<!-- ============ 站6 ============ -->
+<section class="station" id="s6">
+  <div class="station-head">
+    <div class="badge">6</div>
+    <div><h2>选方法口诀 + 错题医院</h2><div class="sub">对症下"药"</div></div>
+  </div>
+  <div class="card">
+    <h3>四把钥匙怎么选？</h3>
+    <div class="mantras">
+      <div class="mantra"><span class="n">①</span><p><b>特殊值法</b>：选择填空、字母给范围 → 代个好算数，秒排</p></div>
+      <div class="mantra"><span class="n">②</span><p><b>测试点法</b>：条件分段 / 数轴位置已知 → 每段取一点</p></div>
+      <div class="mantra"><span class="n">③</span><p><b>作差法</b>：解答题证明、万能 → 作差判正负（配方/因式分解）</p></div>
+      <div class="mantra"><span class="n">④</span><p><b>作商法</b>：两数都是正数、带乘幂分数 → 作商比 1（负数反号！）</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏥 错题医院：点击你认为写错的地方</h3>
+    <div class="case">
+      <div class="causetitle">病历 1　比较 −7 和 −4 的大小</div>
+      <div class="wb">解：∵ |−7| = 7 &gt; 4 = |−4|，<br>∴ <span class="bug" data-diag="d1">−7 &gt; −4</span>。</div>
+      <div class="diag" id="d1"><b>诊断：</b>两个负数比大小，<b>绝对值大的反而小</b>！−7 在数轴上更靠左。正确：<b>−7 &lt; −4</b>。</div>
+    </div>
+    <div class="case">
+      <div class="causetitle">病历 2　比较 a 与 −a（解答题）</div>
+      <div class="wb">解：取 a = 2，则 −a = −2，<br>∴ <span class="bug" data-diag="d2">a &gt; −a</span>（证明完毕）。</div>
+      <div class="diag" id="d2"><b>诊断：</b>两个问题：① <b>特殊值不能用于解答题证明</b>，只能选择填空用；② 结论还不全面：a&gt;0 时 a&gt;−a；a=0 时 a=−a；<b>a&lt;0 时 a&lt;−a</b>（如 a=−2，−a=2）。必须分类讨论或用作差法：a−(−a)=2a，看 2a 的正负分三类。</div>
+    </div>
+    <div class="case">
+      <div class="causetitle">病历 3　比较 a=−6 与 b=−3（用作商法）</div>
+      <div class="wb">解：a/b = (−6)/(−3) = 2 &gt; 1，<br>∴ <span class="bug" data-diag="d3">a &gt; b，即 −6 &gt; −3</span>。</div>
+      <div class="diag" id="d3"><b>诊断：</b>作商法"商大于 1 则被除数大"的规则<b>只对两个正数成立</b>！两个负数作商，结论要<b>反过来看</b>：商 2&gt;1 反而说明 |a|&gt;|b|，即 a 更小。正确：<b>−6 &lt; −3</b>。负数比大小建议直接用"绝对值大的反而小"或作差法：−6−(−3)=−3&lt;0。</div>
+    </div>
+  </div>
+
+  <div class="summary-card">
+    <h2>🎓 一页纸总结</h2>
+    <ol>
+      <li><b>基本法则</b>：数轴向右增大；<span class="hl">两个负数，绝对值大的反而小</span>；正数恒大于负数。</li>
+      <li><b>特殊值法</b>：选择填空 + 字母给范围 → 代好算数，<b>不能用于证明题</b>。</li>
+      <li><b>测试点法</b>：范围分几段，每段取一个代表点，结论整段不变。</li>
+      <li><b>作差法</b>：<span class="hl">a−b 看正负</span>，万能、适合解答题；判号靠配方、因式分解。</li>
+      <li><b>作商法</b>：仅限两个正数，<span class="hl">商比 1 定大小</span>；负数结论反号，一正一负不能用。</li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  沪教版（五四学制）有理数 · 数的大小比较专题互动课 ｜ 专题 1：绝对值化简分类讨论（见同目录 jueduizhi-huajian.html）
+</footer>
+
+<script>
+(function(){
+"use strict";
+var SVGNS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){
+  var e=document.createElementNS(SVGNS,tag);
+  for(var k in attrs)e.setAttribute(k,attrs[k]);
+  if(parent)parent.appendChild(e);
+  return e;
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function fmt(v){return (Math.abs(v-Math.round(v))<1e-9)?String(Math.round(v)):(+v.toFixed(2)).toString();}
+function chip(t,c){return '<span class="chip '+c+'">'+t+'</span>';}
+
+/* ---------- 通用可拖动数轴 ---------- */
+function DragAxis(node,opts){
+  this.opts=opts;
+  this.W=640;this.H=opts.height||150;this.padL=38;this.padR=38;
+  this.axisY=opts.axisY||96;
+  this.min=opts.min;this.max=opts.max;
+  this.points=opts.points||[]; /* [{id,color,init,min,max,label}] */
+  this.dragging=null;
+  this.build(node);
+  this.points.forEach(function(p){this.set(p.id,p.init,true);},this);
+}
+DragAxis.prototype.xToPx=function(x){
+  return this.padL+(x-this.min)/(this.max-this.min)*(this.W-this.padL-this.padR);
+};
+DragAxis.prototype.pxToX=function(px){
+  return this.min+(px-this.padL)/(this.W-this.padL-this.padR)*(this.max-this.min);
+};
+DragAxis.prototype.build=function(node){
+  var o=this.opts,s=el("svg",{viewBox:"0 0 "+this.W+" "+this.H,role:"img","aria-label":"可拖动数轴"},node);
+  this.svg=s;
+  // 区间底色
+  (o.segs||[]).forEach(function(g){
+    el("rect",{x:this.xToPx(g.from),y:this.axisY-30,width:this.xToPx(g.to)-this.xToPx(g.from),height:60,
+      rx:8,fill:g.fill,opacity:g.opacity!=null?g.opacity:.5},s);
+  },this);
+  // 轴
+  el("line",{x1:24,y1:this.axisY,x2:this.W-20,y2:this.axisY,stroke:"#9AA3C7","stroke-width":2.5},s);
+  el("polygon",{points:(this.W-20)+","+this.axisY+" "+(this.W-32)+","+(this.axisY-6)+" "+(this.W-32)+","+(this.axisY+6),fill:"#9AA3C7"},s);
+  // 刻度
+  for(var i=Math.ceil(this.min);i<=Math.floor(this.max);i++){
+    var px=this.xToPx(i);
+    el("line",{x1:px,y1:this.axisY-5,x2:px,y2:this.axisY+5,stroke:i===0?"#55C59D":"#C3C9E8","stroke-width":i===0?2:1.4},s);
+    var t=el("text",{x:px,y:this.axisY+24,"text-anchor":"middle","font-size":13,
+      fill:i===0?"#176e50":"#6B7194","font-weight":i===0?800:600,
+      "font-family":"Nunito,PingFang SC,sans-serif"},s);
+    t.textContent=i;
+  }
+  // 特殊标记点（不可拖动）
+  (o.marks||[]).forEach(function(m){
+    var mx=this.xToPx(m.x);
+    el("line",{x1:mx,y1:this.axisY-26,x2:mx,y2:this.axisY,stroke:m.color,"stroke-width":2,"stroke-dasharray":"4 4",opacity:.7},s);
+    var t=el("text",{x:mx,y:this.axisY-32,"text-anchor":"middle","font-size":13,fill:m.color,"font-weight":800,
+      "font-family":"Times New Roman,Georgia,serif"},s);
+    t.textContent=m.label;
+  },this);
+  // 区间标签
+  (o.segLabels||[]).forEach(function(l){
+    var cx=(this.xToPx(l.from)+this.xToPx(l.to))/2;
+    var tt=el("text",{x:cx,y:this.axisY+46,"text-anchor":"middle","font-size":13,fill:l.color||"#6B7194",
+      "font-weight":800,"font-family":"Nunito,PingFang SC,sans-serif"},s);
+    tt.textContent=l.text;
+  },this);
+  // 可拖点
+  this.ptGroups={};
+  this.points.forEach(function(p){
+    var g=el("g",{style:"cursor:grab"},s);
+    var halo=el("circle",{cx:0,cy:this.axisY,r:20,fill:p.color,opacity:.16},g);
+    var pt=el("circle",{cx:0,cy:this.axisY,r:11,fill:p.color,stroke:"#fff","stroke-width":3},g);
+    var bg=el("rect",{x:0,y:0,width:70,height:24,rx:12,fill:"#1F2433",opacity:.85},g);
+    var tx=el("text",{x:0,y:0,"text-anchor":"middle","font-size":13.5,fill:"#fff","font-weight":800,
+      "font-family":"Nunito,PingFang SC,sans-serif","dominant-baseline":"central"},g);
+    this.ptGroups[p.id]={g:g,halo:halo,pt:pt,bg:bg,tx:tx,color:p.color};
+    p.value=p.init;
+    var self=this;
+    function evtX(ev){var r=s.getBoundingClientRect();return (ev.clientX-r.left)/r.width*self.W;}
+    function down(ev){self.dragging=p.id; g.style.cursor="grabbing"; g.setPointerCapture&&g.setPointerCapture(ev.pointerId); move(ev); ev.preventDefault(); ev.stopPropagation();}
+    function move(ev){
+      if(self.dragging!==p.id)return;
+      var x=self.pxToX(evtX(ev));
+      x=clamp(x, p.min!=null?p.min:self.min, p.max!=null?p.max:self.max);
+      x=Math.round(x*4)/4; // 0.25 吸附
+      self.set(p.id,x);
+    }
+    function up(){self.dragging=null; g.style.cursor="grab";}
+    g.addEventListener("pointerdown",down);
+    s.addEventListener("pointermove",move);
+    s.addEventListener("pointerup",up);
+    s.addEventListener("pointercancel",up);
+  },this);
+};
+DragAxis.prototype.set=function(id,x,silent){
+  var p=this.points.find(function(q){return q.id===id;});
+  if(!p)return;
+  p.value=x;
+  var g=this.ptGroups[id];
+  var px=this.xToPx(x);
+  g.pt.setAttribute("cx",px);g.halo.setAttribute("cx",px);
+  var txt=p.label+"="+fmt(x);
+  g.tx.textContent=txt;
+  var bw=Math.max(64,txt.length*8+18);
+  var ty=this.axisY-34;
+  g.bg.setAttribute("x",px-bw/2);g.bg.setAttribute("width",bw);
+  g.bg.setAttribute("y",ty-12);g.tx.setAttribute("x",px);g.tx.setAttribute("y",ty);
+  if(!silent&&this.opts.onChange)this.opts.onChange();
+};
+
+/* ---------- 函数图 ---------- */
+function FnPlot(node,opts){
+  this.opts=opts;
+  this.W=640;this.H=opts.height||210;this.padL=40;this.padR=20;this.padT=18;this.padB=34;
+  this.xmin=opts.xmin;this.xmax=opts.xmax;this.ymin=opts.ymin!=null?opts.ymin:0;this.ymax=opts.ymax;
+  this.build(node);
+}
+FnPlot.prototype.xToPx=function(x){return this.padL+(x-this.xmin)/(this.xmax-this.xmin)*(this.W-this.padL-this.padR);};
+FnPlot.prototype.yToPx=function(y){
+  return this.H-this.padB-(y-this.ymin)/(this.ymax-this.ymin)*(this.H-this.padT-this.padB);
+};
+FnPlot.prototype.build=function(node){
+  var s=el("svg",{viewBox:"0 0 "+this.W+" "+this.H,role:"img","aria-label":"函数图像"},node);
+  this.svg=s;
+  // 网格
+  for(var y=Math.ceil(this.ymin);y<=this.ymax;y++){
+    if(y===0)continue;
+    var yy=this.yToPx(y);
+    el("line",{x1:this.padL,y1:yy,x2:this.W-this.padR,y2:yy,stroke:"#EEF0FA","stroke-width":1},s);
+    el("text",{x:this.padL-8,y:yy+4,"text-anchor":"end","font-size":12,fill:"#9AA3C7",
+      "font-family":"Nunito,sans-serif"},s).textContent=y;
+  }
+  // 轴
+  var y0=this.yToPx(0);
+  el("line",{x1:this.padL,y1:y0,x2:this.W-this.padR,y2:y0,stroke:"#9AA3C7","stroke-width":2},s);
+  var zx=this.xToPx(0);
+  if(zx>=this.padL&&zx<=this.W-this.padR){
+    el("line",{x1:zx,y1:this.padT,x2:zx,y2:this.H-this.padB,stroke:"#C3C9E8","stroke-width":1.5},s);
+  }
+  el("text",{x:this.W-this.padR+2,y:y0+14,"font-size":12,fill:"#6B7194","font-family":"Nunito,sans-serif"},s).textContent="x";
+  // 参考线 y=1（作商法）
+  if(this.opts.refLine){
+    var ry=this.yToPx(this.opts.refLine.y);
+    el("line",{x1:this.padL,y1:ry,x2:this.W-this.padR,y2:ry,stroke:this.opts.refLine.color||"#E8B93C",
+      "stroke-width":2,"stroke-dasharray":"6 5"},s);
+    el("text",{x:this.W-this.padR-6,y:ry-6,"text-anchor":"end","font-size":12.5,fill:this.opts.refLine.color||"#E8B93C",
+      "font-weight":800,"font-family":"Nunito,sans-serif"},s).textContent=this.opts.refLine.label;
+  }
+  // 曲线
+  this.opts.segs.forEach(function(g){
+    var d="";var N=80;
+    for(var i=0;i<=N;i++){
+      var x=g.from+(g.to-g.from)*i/N;
+      var yy=g.fn(x);
+      d+=(i===0?"M":"L")+this.xToPx(x).toFixed(1)+","+this.yToPx(yy).toFixed(1);
+    }
+    el("path",{d:d,fill:"none",stroke:g.color,"stroke-width":3.5,"stroke-linejoin":"round","stroke-linecap":"round"},s);
+  },this);
+  // 动点
+  this.dotG=el("g",{},s);
+  this.vline=el("line",{x1:0,y1:0,x2:0,y2:y0,stroke:this.opts.dotColor||"#5B6CFF","stroke-width":1.5,"stroke-dasharray":"4 4",opacity:.6},this.dotG);
+  this.hline=el("line",{x1:zx,y1:0,x2:0,y2:0,stroke:this.opts.dotColor||"#5B6CFF","stroke-width":1.5,"stroke-dasharray":"4 4",opacity:.6},this.dotG);
+  this.dot=el("circle",{cx:0,cy:0,r:7,fill:this.opts.dotColor||"#5B6CFF",stroke:"#fff","stroke-width":2.5},this.dotG);
+  this.labBg=el("rect",{x:0,y:0,width:110,height:22,rx:11,fill:"#1F2433",opacity:.85},this.dotG);
+  this.lab=el("text",{x:0,y:0,"text-anchor":"middle","font-size":12.5,fill:"#fff","font-weight":700,
+    "font-family":"Nunito,sans-serif","dominant-baseline":"central"},this.dotG);
+};
+FnPlot.prototype.setXY=function(x,y,label){
+  var px=this.xToPx(x),py=this.yToPx(y);
+  this.dot.setAttribute("cx",px);this.dot.setAttribute("cy",py);
+  var y0=this.yToPx(0);
+  this.vline.setAttribute("x1",px);this.vline.setAttribute("x2",px);this.vline.setAttribute("y1",Math.min(py,y0));
+  this.vline.setAttribute("y2",Math.max(py,y0));
+  this.hline.setAttribute("y1",py);this.hline.setAttribute("y2",py);
+  this.hline.setAttribute("x1",this.xToPx(0));this.hline.setAttribute("x2",px);
+  var txt=label||("("+fmt(x)+", "+fmt(y)+")");
+  this.lab.textContent=txt;
+  var bw=Math.max(90,txt.length*7.2+18);
+  var lx=clamp(px-bw/2,this.padL+4,this.W-this.padR-bw-4);
+  var ly=py-30<this.padT?py+14:py-30;
+  this.labBg.setAttribute("x",lx);this.labBg.setAttribute("width",bw);
+  this.labBg.setAttribute("y",ly-11);this.lab.setAttribute("x",lx+bw/2);this.lab.setAttribute("y",ly);
+};
+
+/* ============ 站0：a / −a / |a| ============ */
+(function(){
+  var ro=document.getElementById("readout0");
+  var ax=new DragAxis(document.getElementById("lab0"),{
+    min:-5,max:5,
+    points:[{id:"a",color:"#5B6CFF",init:2,label:"a"}],
+    onChange:update
+  });
+  // 附属点：−a 粉，|a| 绿（用 marks 不好，直接在 svg 上画）
+  var svg=ax.svg;
+  var negG=el("g",{},svg);
+  var absG=el("g",{},svg);
+  var negPt=el("circle",{cx:0,cy:ax.axisY,r:8.5,fill:"#FF7AB6",stroke:"#fff","stroke-width":2.5},negG);
+  var negTx=el("text",{x:0,y:ax.axisY+44,"text-anchor":"middle","font-size":12.5,fill:"#D94D8C","font-weight":800,
+    "font-family":"Nunito,sans-serif"},negG);
+  var absPt=el("circle",{cx:0,cy:ax.axisY-52,r:8.5,fill:"#55C59D",stroke:"#fff","stroke-width":2.5},absG);
+  var absTx=el("text",{x:0,y:ax.axisY-66,"text-anchor":"middle","font-size":12.5,fill:"#176e50","font-weight":800,
+    "font-family":"Nunito,sans-serif"},absG);
+  function update(){
+    var a=ax.points[0].value;
+    var na=-a, aa=Math.abs(a);
+    negPt.setAttribute("cx",ax.xToPx(na));
+    negTx.setAttribute("x",ax.xToPx(na)); negTx.textContent="−a="+fmt(na);
+    absPt.setAttribute("cx",ax.xToPx(aa));
+    absTx.setAttribute("x",ax.xToPx(aa)); absTx.textContent="|a|="+fmt(aa);
+    var order;
+    if(a>0) order=chip("a>0：a = |a|","ok")+chip("−a 是负数","neg")+chip("大小：−a &lt; 0 &lt; a = |a|","ok");
+    else if(a<0) order=chip("a&lt;0：−a = |a| 是正数","ok")+chip("a 是负数","neg")+chip("大小：a &lt; 0 &lt; −a = |a|，即 −a &gt; a！","bad");
+    else order=chip("a=0：三者都为 0","zero");
+    ro.innerHTML=chip("a = "+fmt(a),a>0?"pos":a<0?"neg":"zero")+
+      chip("−a = "+fmt(na),na>0?"pos":na<0?"neg":"zero")+
+      chip("|a| = "+fmt(aa),"ok")+order;
+  }
+  ax.set("a",2);
+})();
+
+/* ============ 站1：特殊值法台阶 ============ */
+(function(){
+  var zone=document.getElementById("stairs1");
+  var data=[
+    {name:"a²",val:null,color:"#FF7AB6",h:70},
+    {name:"a",val:null,color:"#5B6CFF",h:120},
+    {name:"1/a",val:null,color:"#55C59D",h:190}
+  ];
+  function render(populated){
+    zone.innerHTML="";
+    data.forEach(function(d){
+      var d3=document.createElement("div");
+      d3.className="stair";
+      d3.style.order=d.order||0;
+      d3.innerHTML='<div class="val" style="color:'+d.color+'">'+(populated?"= "+d.val:"?")+'</div>'+
+        '<div class="bar" style="height:'+(populated?d.h:40)+'px;background:'+d.color+'">'+d.name+'</div>'+
+        '<div class="lab2">'+d.name+'</div>';
+      zone.appendChild(d3);
+    });
+  }
+  render(false);
+  document.getElementById("btn1").addEventListener("click",function(){
+    var a=0.5;
+    data[0].val=0.25; data[1].val=0.5; data[2].val=2;
+    // 排序：值越小 order 越小（左边）
+    var sorted=data.slice().sort(function(x,y){return x.val-y.val;});
+    sorted.forEach(function(d,i){d.order=i;});
+    render(true);
+    document.getElementById("note1").style.display="block";
+  });
+  document.getElementById("btn1r").addEventListener("click",function(){
+    data.forEach(function(d){d.order=0;});
+    render(false);
+    document.getElementById("note1").style.display="none";
+  });
+})();
+
+/* ============ 站2：测试点法（双点拖动） ============ */
+(function(){
+  var ro=document.getElementById("readout2");
+  var ax=new DragAxis(document.getElementById("lab2"),{
+    min:-3,max:4,
+    segs:[{from:-1,to:0,fill:"#FFEEF6"},{from:1,to:4,fill:"#EEF0FF"}],
+    segLabels:[{from:-1,to:0,text:"−1<a<0",color:"#D94D8C"},{from:1,to:4,text:"b>1",color:"#5B6CFF"}],
+    marks:[{x:-1,label:"−1",color:"#FF7AB6"},{x:1,label:"1",color:"#5B6CFF"}],
+    points:[
+      {id:"a",color:"#FF7AB6",init:-0.5,min:-1,max:0,label:"a"},
+      {id:"b",color:"#8A7BFF",init:2,min:1,max:4,label:"b"}
+    ],
+    onChange:update
+  });
+  function update(){
+    var a=ax.points[0].value, b=ax.points[1].value;
+    var vals=[
+      {name:"−b",v:-b},{name:"a",v:a},{name:"−a",v:-a},{name:"a+b",v:a+b},{name:"b",v:b}
+    ];
+    vals.sort(function(x,y){return x.v-x.y;});
+    var s=vals.map(function(d){return d.name+"="+fmt(d.v);}).join(" &lt; ");
+    ro.innerHTML=chip("a = "+fmt(a),"neg")+chip("b = "+fmt(b),"pos")+
+      chip("排序："+s,"ok")+
+      chip("结论：−b &lt; a &lt; −a &lt; a+b &lt; b","zero");
+  }
+  ax.set("a",-0.5); ax.set("b",2);
+})();
+
+/* ============ 站3：作差法 (x²+4)−4x ============ */
+(function(){
+  var f=function(x){return x*x+4-4*x;};
+  var ax=new DragAxis(document.getElementById("lab3-axis"),{
+    min:-1,max:5,
+    points:[{id:"x",color:"#8A7BFF",init:0,min:-1,max:5,label:"x"}],
+    onChange:function(){var x=ax.points[0].value; plot.setXY(x,f(x),"差="+(Math.abs(f(x))<1e-9?"0":fmt(f(x)))); update(x);}
+  });
+  var plot=new FnPlot(document.getElementById("lab3-plot"),{
+    xmin:-1,xmax:5,ymin:0,ymax:10,
+    segs:[{from:-1,to:5,color:"#8A7BFF",fn:f}]
+  });
+  var ro=document.getElementById("readout3");
+  function update(x){
+    var d=f(x);
+    var a2=x*x+4, b2=4*x;
+    ro.innerHTML=chip("x = "+fmt(x),"pos")+
+      chip("x²+4 = "+fmt(a2),"ok")+
+      chip("4x = "+fmt(b2),"neg")+
+      chip("差 = (x²+4)−4x = "+fmt(d), Math.abs(d)<1e-9?"zero":"ok")+
+      chip(Math.abs(d)<1e-9?"差=0：两者相等（x=2）":"差>0：x²+4 > 4x", Math.abs(d)<1e-9?"zero":"ok");
+  }
+  ax.set("x",0);
+})();
+
+/* ============ 站4：作商法 a/b ============ */
+(function(){
+  var A=6;
+  var f=function(b){return A/b;};
+  var ax=new DragAxis(document.getElementById("lab4-axis"),{
+    min:0,max:12,
+    marks:[{x:6,label:"a=6",color:"#5B6CFF"}],
+    points:[{id:"b",color:"#FF7AB6",init:3,min:0.5,max:12,label:"b"}],
+    onChange:function(){var b=ax.points[0].value; plot.setXY(b,f(b),"商 a/b="+fmt(f(b))); update(b);}
+  });
+  var plot=new FnPlot(document.getElementById("lab4-plot"),{
+    xmin:0,xmax:12,ymin:0,ymax:14,
+    refLine:{y:1,color:"#E8B93C",label:"商 = 1（分界线）"},
+    segs:[{from:0.5,to:12,color:"#55C59D",fn:f}],
+    dotColor:"#FF7AB6"
+  });
+  var ro=document.getElementById("readout4");
+  function update(b){
+    var q=A/b;
+    var cmp = q>1+1e-9 ? ("商>1 → a > b，即 6 > "+fmt(b)) : (q<1-1e9 ? ("商<1 → a < b，即 6 < "+fmt(b)) : "商=1 → a = b = 6");
+    ro.innerHTML=chip("a = 6（正数）","pos")+chip("b = "+fmt(b)+"（正数）","neg")+
+      chip("商 a/b = 6/"+fmt(b)+" = "+fmt(q), Math.abs(q-1)<1e-9?"zero":"ok")+
+      chip(cmp, Math.abs(q-1)<1e-9?"zero":"ok");
+  }
+  ax.set("b",3);
+})();
+
+/* ============ 站5 闯关 ============ */
+var QUIZ=[
+{no:"第 1 关 · 负数比较",hard:false,
+ title:"比较 −3/4 与 −4/5 的大小",
+ steps:[
+  {q:"两个负数比大小，第一步做什么？",
+   opts:[
+     {t:"比绝对值，绝对值大的反而小",ok:true,e:"对！两个负数：|a|大 → a 更靠左 → a 更小。"},
+     {t:"直接看数字，4/5 大所以 −4/5 大",ok:false,e:"负数要反着想：负得越多（绝对值越大）反而越小。"},
+     {t:"分子小的数大",ok:false,e:"负数比较不能只看分子，先通分比绝对值，再反向。"}]},
+  {q:"|−3/4| = 3/4 = 0.75，|−4/5| = 4/5 = 0.8。结论是？",
+   opts:[
+     {t:"0.8 > 0.75，所以 −4/5 < −3/4",ok:true,e:"对！绝对值 4/5 更大，所以 −4/5 反而更小：−4/5 < −3/4。"},
+     {t:"0.8 > 0.75，所以 −4/5 > −3/4",ok:false,e:"反了！负数的绝对值越大，数本身越小。"}]}
+ ],
+ sol:'<b>规范书写：</b><br>解：|−3/4| = 3/4 = 15/20，|−4/5| = 4/5 = 16/20。<br>∵ 16/20 &gt; 15/20，即 |−4/5| &gt; |−3/4|，<br>∴ <b>−4/5 &lt; −3/4</b>（两个负数，绝对值大的反而小）。'},
+{no:"第 2 关 · 特殊值法",hard:false,
+ title:"若 a > 1，比较 a、a²、1/a 的大小（选择题）",
+ steps:[
+  {q:"用特殊值法，取哪个数最合适？",
+   opts:[
+     {t:"a = 2",ok:true,e:"好选择！整数、好算、在 a&gt;1 范围内，还避开边界 1。"},
+     {t:"a = 1",ok:false,e:"a=1 是边界点，题目是 a&gt;1 不含 1；而且 1²=1、1/a=1 全相等，看不出顺序。"},
+     {t:"a = 0.5",ok:false,e:"0.5 不在 a&gt;1 的范围内！取值必须符合条件。"}]},
+  {q:"代入 a=2：a²=4，1/a=0.5。排序是？",
+   opts:[
+     {t:"1/a < a < a²",ok:true,e:"对！0.5 < 2 < 4。记住模型：a&gt;1 时，平方变大、倒数变小。"},
+     {t:"a² < a < 1/a",ok:false,e:"代反了：a²=4 是最大的，1/a=0.5 是最小的。"},
+     {t:"a < a² < 1/a",ok:false,e:"1/a=0.5 比 a=2 小，应排在最左边。"}]}
+ ],
+ sol:'<b>规范书写（选择题可用）：</b><br>解：取 a=2（满足 a&gt;1），则 a²=4，1/a=1/2。<br>∵ 1/2 &lt; 2 &lt; 4，∴ <b>1/a &lt; a &lt; a²</b>。<br><span style="color:#176e50">对比记忆：0&lt;a&lt;1 时 a²&lt;a&lt;1/a；a&gt;1 时正好相反 1/a&lt;a&lt;a²。</span>'},
+{no:"第 3 关 · 作差法",hard:false,
+ title:"比较 a²+1 与 2a 的大小",
+ steps:[
+  {q:"作差：(a²+1) − 2a 可以配成什么？",
+   opts:[
+     {t:"(a−1)²",ok:true,e:"对！a²−2a+1 是完全平方公式：(a−1)²。"},
+     {t:"(a+1)²",ok:false,e:"(a+1)² = a²+2a+1，中间项符号不对。"},
+     {t:"a²−1",ok:false,e:"a²+1−2a 不能化成 a²−1，中间还有 −2a。"}]},
+  {q:"(a−1)² 与 0 的关系是？由此大小关系是？",
+   opts:[
+     {t:"(a−1)² ≥ 0，所以 a²+1 ≥ 2a（a=1 时相等）",ok:true,e:"对！平方数永远非负，差≥0，所以 a²+1 ≥ 2a，仅 a=1 取等。"},
+     {t:"(a−1)² > 0，所以 a²+1 > 2a",ok:false,e:"差 ≥0 而不是 >0：当 a=1 时 (a−1)²=0，两数相等，等号要写上。"}]}
+ ],
+ sol:'<b>规范书写：</b><br>解：作差 (a²+1) − 2a = a²−2a+1 = (a−1)²。<br>∵ (a−1)² ≥ 0 对任意 a 成立，<br>∴ <b>a²+1 ≥ 2a</b>，当且仅当 a=1 时等号成立。'},
+{no:"第 4 关 · 选方法综合",hard:true,
+ title:"比较 −5⁵ 与 −6⁴ 的大小，最优方法是？",
+ steps:[
+  {q:"两个都是负数，且带乘方。第一步策略是？",
+   opts:[
+     {t:"先比 |−5⁵|=5⁵ 与 |−6⁴|=6⁴（正数作商或直接算），再反号",ok:true,e:"对！负数比较：先比绝对值。5⁵=3125，6⁴=1296，绝对值 3125&gt;1296，所以 −5⁵ 反而更小。"},
+     {t:"直接用作商法 (−5⁵)/(−6⁴) 比 1",ok:false,e:"两个负数不能直接用「商大于1则被除数大」的规则，结论会反。要先换成正数比绝对值。"},
+     {t:"负数的乘方，指数大的数大",ok:false,e:"没有这种规律！底数不同，必须算出或比较绝对值。"}]},
+  {q:"5⁵ = 3125，6⁴ = 1296。最终结论？",
+   opts:[
+     {t:"−5⁵ < −6⁴",ok:true,e:"对！|−5⁵|=3125 &gt; 1296=|−6⁴|，绝对值大的负数反而小。"},
+     {t:"−5⁵ > −6⁴",ok:false,e:"反了：3125 比 1296「负得更多」，−3125 在数轴上更靠左。"}]}
+ ],
+ sol:'<b>规范书写：</b><br>解：|−5⁵| = 5⁵ = 3125，|−6⁴| = 6⁴ = 1296。<br>∵ 3125 &gt; 1296（也可作商：5⁵/6⁴ = 3125/1296 &gt; 1，两数为正，商&gt;1 则前者大），<br>∴ 绝对值 5⁵ &gt; 6⁴，两个负数绝对值大的反而小，<br>∴ <b>−5⁵ &lt; −6⁴</b>。'}
+];
+
+var zone=document.getElementById("quiz-zone");
+QUIZ.forEach(function(q,qi){
+  var card=document.createElement("div");
+  card.className="card quiz";
+  var html='<div class="qhead"><span class="qno'+(q.hard?' hard':'')+'">'+q.no+'</span><span class="qtitle">'+q.title+'</span></div>';
+  q.steps.forEach(function(st,si){
+    html+='<div class="qstep"><div class="qq">'+st.q+'</div><div class="opts">';
+    st.opts.forEach(function(o,oi){html+='<button class="opt" data-oi="'+oi+'">'+o.t+'</button>';});
+    html+='</div><div class="qexplain"></div></div>';
+  });
+  html+='<div class="solution note green"><span class="t">✅ 通关！规范书写：</span>'+q.sol+'</div>';
+  card.innerHTML=html;
+  zone.appendChild(card);
+  var stepEls=card.querySelectorAll(".qstep");
+  stepEls[0].classList.add("active");
+  stepEls.forEach(function(se,si){
+    var expl=se.querySelector(".qexplain");
+    se.querySelectorAll(".opt").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        var o=q.steps[si].opts[+btn.dataset.oi];
+        if(se.classList.contains("done"))return;
+        if(o.ok){
+          btn.classList.add("correct");
+          se.querySelectorAll(".opt").forEach(function(b){b.disabled=true;});
+          expl.className="qexplain show ok";
+          expl.innerHTML="✔ "+o.e;
+          se.classList.remove("active");se.classList.add("done");
+          if(stepEls[si+1])stepEls[si+1].classList.add("active");
+          else{card.classList.add("unlocked");card.querySelector(".solution").classList.add("show");}
+        }else{
+          btn.classList.add("wrong");btn.disabled=true;
+          expl.className="qexplain show no";
+          expl.innerHTML="✘ "+o.e+"　（再试一次）";
+        }
+      });
+    });
+  });
+});
+
+/* ============ 跨专题跳转 ============ */
+document.querySelectorAll("[data-goto]").forEach(function(a){
+  a.addEventListener("click",function(e){
+    e.preventDefault();
+    window.location.href=a.dataset.goto;
+  });
+});
+/* ============ 错题医院 ============ */
+document.querySelectorAll(".bug").forEach(function(b){
+  b.addEventListener("click",function(){
+    b.classList.add("found");
+    var d=document.getElementById(b.dataset.diag);
+    if(d)d.classList.add("show");
+  });
+});
+
+/* ============ 导航 scroll spy ============ */
+var navLinks=document.querySelectorAll("#pathnav a");
+var sections=[];
+navLinks.forEach(function(a){
+  var sec=document.getElementById(a.getAttribute("href").slice(1));
+  if(sec)sections.push({a:a,sec:sec});
+});
+function updateNav(){
+  var y=window.scrollY+140,current=null;
+  sections.forEach(function(s){if(s.sec.offsetTop<=y)current=s;});
+  navLinks.forEach(function(a){a.classList.remove("active");});
+  if(current){
+    current.a.classList.add("active");
+    var idx=sections.indexOf(current);
+    sections.forEach(function(s,i){s.a.classList.toggle("done",i<idx);});
+  }
+}
+window.addEventListener("scroll",updateNav,{passive:true});
+updateNav();
+navLinks.forEach(function(a){
+  a.addEventListener("click",function(e){
+    var sec=document.getElementById(a.getAttribute("href").slice(1));
+    if(sec){e.preventDefault();sec.scrollIntoView({behavior:"smooth",block:"start"});}
+  });
+});
+})();
+</script>
+</body>
+</html>
