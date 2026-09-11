@@ -126,6 +126,7 @@ main{padding:36px 0 60px}
 .chip.pos{border-color:var(--primary); color:var(--primary); background:var(--blue-soft)}
 .chip.neg{border-color:var(--pink); color:#D94D8C; background:var(--pink-soft)}
 .chip.zero{border-color:#E8B93C; color:#B8891A; background:var(--yellow-soft)}
+.chip.ok{border-color:var(--green); color:#176e50; background:var(--green-soft)}
 .drag-tip{text-align:center; font-size:12.5px; color:var(--muted); padding-bottom:8px}
 
 /* steps */
@@ -175,6 +176,8 @@ table.grid td .cond{font-family:"Nunito","PingFang SC",sans-serif; color:var(--m
 tr.seg-neg td:first-child{background:var(--pink-soft)}
 tr.seg-mid td:first-child{background:var(--yellow-soft)}
 tr.seg-pos td:first-child{background:var(--blue-soft)}
+tr.seg-total td{background:#F0F3FF}
+table.grid td b{font-weight:800}
 
 /* quiz */
 .quiz{border:2px solid var(--line); border-radius:16px; padding:18px 20px; margin-bottom:18px;
@@ -402,6 +405,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--primary); outline-o
           </span>
         </span>
       </div>
+      <p style="margin-top:10px;font-size:14px;color:#176e50;font-weight:700">🏆 进一步想最小值：x≥2 段递增（起点 x=2 值为 0）、x&lt;2 段递减（y&gt;0 取不到 0）→ 整个 |x−2| 的<b>最小值 = 0</b>，在 x=2（零点！）时取到。<b style="color:#b2313f">单个绝对值的最小值永远是 0，在内部等于 0 时取到</b>。</p>
     </div>
 
     <div class="note red reveal" id="s2-warn1">
@@ -434,17 +438,45 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--primary); outline-o
 
     <div class="tbl-wrap">
       <table class="grid">
-        <caption style="caption-side:top;text-align:left;font-weight:800;font-size:14.5px;padding:6px 0;">分段化简结果：</caption>
-        <tr><th>x 的范围</th><th>x+1</th><th>x−2</th><th>|x+1|+|x−2| =</th></tr>
-        <tr class="seg-neg"><td>x &lt; −1</td><td>负</td><td>负</td><td>−(x+1)−(x−2) = <b>−2x+1</b></td></tr>
-        <tr class="seg-mid"><td>−1 ≤ x ≤ 2</td><td>正 / 零</td><td>负</td><td>(x+1)−(x−2) = <b>3</b></td></tr>
-        <tr class="seg-pos"><td>x &gt; 2</td><td>正</td><td>正</td><td>(x+1)+(x−2) = <b>2x−1</b></td></tr>
+        <caption style="caption-side:top;text-align:left;font-weight:800;font-size:14.5px;padding:6px 0;">分段化简结果 + <span style="color:#176e50">每段最小值讨论</span>：</caption>
+        <tr><th>x 的范围</th><th>x+1</th><th>x−2</th><th>|x+1|+|x−2| =</th><th>这段的最小值是多少？</th></tr>
+        <tr class="seg-neg"><td>x &lt; −1</td><td>负</td><td>负</td><td>−(x+1)−(x−2) = <b>−2x+1</b></td>
+          <td style="text-align:left;font-family:'Nunito','PingFang SC',sans-serif;font-size:13px;font-weight:600">📉 系数 −2&lt;0，<b>递减</b>：越往右（靠近 x=−1）越小<br>但 x&lt;−1 <b>取不到 −1</b>，只能无限接近<br>∴ y &gt; 3，<b style="color:#b2313f">这段没有最小值</b>（下界 3，达不到）</td></tr>
+        <tr class="seg-mid"><td>−1 ≤ x ≤ 2</td><td>正 / 零</td><td>负</td><td>(x+1)−(x−2) = <b>3</b></td>
+          <td style="text-align:left;font-family:'Nunito','PingFang SC',sans-serif;font-size:13px;font-weight:600">➡️ 恒等于 3（常数）<br>端点 −1、2 都<b>属于本段</b>（≤）<br>∴ <b style="color:#176e50">最小值 = 3，整段都能取到 ✅</b></td></tr>
+        <tr class="seg-pos"><td>x &gt; 2</td><td>正</td><td>正</td><td>(x+1)+(x−2) = <b>2x−1</b></td>
+          <td style="text-align:left;font-family:'Nunito','PingFang SC',sans-serif;font-size:13px;font-weight:600">📈 系数 2&gt;0，<b>递增</b>：越往左（靠近 x=2）越小<br>但 x&gt;2 <b>取不到 2</b>，只能无限接近<br>∴ y &gt; 3，<b style="color:#b2313f">这段没有最小值</b>（下界 3，达不到）</td></tr>
+        <tr class="seg-total"><td colspan="4" style="text-align:right;font-family:'Nunito','PingFang SC',sans-serif">三段放一起比较 → <b>全局最小值</b></td>
+          <td style="background:#E8F8F2;color:#176e50;font-family:'Nunito','PingFang SC',sans-serif;font-size:13.5px;font-weight:800">🏆 最小值 = <b>3</b><br>当 −1 ≤ x ≤ 2 时取到</td></tr>
       </table>
+    </div>
+
+    <div class="note blue">
+      <span class="t">🔍 每段最小值怎么求？——一次函数「三看」</span>
+      <b>一看式子：</b>每段化简结果都是 <span class="f">y = kx + b</span>（一次函数或常数）；<br>
+      <b>二看系数 k：</b>k &gt; 0 → 递增，最小值在<b>左端点</b>；k &lt; 0 → 递减，最小值在<b>右端点</b>；k = 0 → 常数，<b>整段都是最小值</b>；<br>
+      <b>三看端点能不能取到：</b>端点写 ≤ / ≥（闭区间）→ 能取到，写"<b>最小值 = …</b>"；端点写 &lt; / &gt;（开区间）→ 只能无限接近，写"<b>y &gt; …</b>"，这段<b>没有最小值</b>；<br>
+      最后把各段的最小值<b>放在一起比较</b>，最小的那个就是全局最小值。
+    </div>
+
+    <h3 style="margin-top:18px">规范书写：求 |x+1|+|x−2| 的最小值</h3>
+    <div class="workbook">
+      <span class="ln">解：令 x+1=0 得 x=−1；令 x−2=0 得 x=2。分三段讨论：</span>
+      <span class="ln">① 当 <span class="blue">x &lt; −1</span> 时，原式 = −2x+1。</span>
+      <span class="ln">　∵ 系数 −2 &lt; 0，原式随 x 增大而减小，</span>
+      <span class="ln">　∴ 原式 &gt; −2×(−1)+1 = <span class="red">3</span>（x=−1 不在本段，取不到）；</span>
+      <span class="ln">② 当 <span class="blue">−1 ≤ x ≤ 2</span> 时，原式 = 3，</span>
+      <span class="ln">　∴ 本段最小值为 <span class="red">3</span>，整段都能取到；</span>
+      <span class="ln">③ 当 <span class="blue">x &gt; 2</span> 时，原式 = 2x−1。</span>
+      <span class="ln">　∵ 系数 2 &gt; 0，原式随 x 增大而增大，</span>
+      <span class="ln">　∴ 原式 &gt; 2×2−1 = <span class="red">3</span>（x=2 不在本段，取不到）。</span>
+      <span class="ln">三段比较，3 最小。</span>
+      <span class="ln">∴ 原式的最小值为 <span class="red">3</span>，当 −1 ≤ x ≤ 2 时取到。</span>
     </div>
 
     <div class="note yellow">
       <span class="t">🌟 几何意义彩蛋（华育常考：最小值问题）</span>
-      <span class="f">|x+1|</span> 是 x 到 −1 的距离，<span class="f">|x−2|</span> 是 x 到 2 的距离。当 x 落在 −1 和 2 <b>之间</b>时，两段距离拼起来正好等于 −1 到 2 的距离 = <b>3</b>——这就是图像上那段黄色"平底"！所以 <b>|x+1|+|x−2| 的最小值是 3</b>，在 −1≤x≤2 时取到。画图或想距离，直接秒杀。
+      <span class="f">|x+1|</span> 是 x 到 −1 的距离，<span class="f">|x−2|</span> 是 x 到 2 的距离。当 x 落在 −1 和 2 <b>之间</b>时，两段距离拼起来正好等于 −1 到 2 的距离 = <b>3</b>——这就是图像上那段黄色"平底"（绿色端点之间）！所以 <b>|x+1|+|x−2| 的最小值是 3</b>，在 −1≤x≤2 时取到。分段计算、画图、想距离，三种方法殊途同归。
     </div>
   </div>
 </section>
@@ -725,6 +757,19 @@ FnPlot.prototype.build=function(node){
     }
     el("path",{d:d,fill:"none",stroke:g.color,"stroke-width":3.5,"stroke-linejoin":"round","stroke-linecap":"round"},s);
   },this);
+  // 平底最小值标注（若提供 flatMin:{x1,x2,y,label}）
+  if(opts.flatMin){
+    var fm=opts.flatMin;
+    var fx1=this.xToPx(fm.x1),fx2=this.xToPx(fm.x2),fy=this.yToPx(fm.y);
+    el("line",{x1:fx1,y1:fy,x2:fx2,y2:fy,stroke:"#55C59D","stroke-width":7,"stroke-linecap":"round",opacity:.85},s);
+    el("circle",{cx:fx1,cy:fy,r:6,fill:"#55C59D",stroke:"#fff","stroke-width":2},s);
+    el("circle",{cx:fx2,cy:fy,r:6,fill:"#55C59D",stroke:"#fff","stroke-width":2},s);
+    var fbx=fx1, fby=fy-34;
+    el("rect",{x:fbx,y:fby,width:148,height:24,rx:12,fill:"#176e50",opacity:.95},s);
+    var ft=el("text",{x:fbx+74,y:fby+12.5,"text-anchor":"middle","font-size":13,fill:"#fff",
+      "font-weight":800,"font-family":"Nunito,PingFang SC,sans-serif","dominant-baseline":"central"},s);
+    ft.textContent=fm.label;
+  }
   // 动点
   this.dotG=el("g",{},s);
   this.vline=el("line",{x1:0,y1:0,x2:0,y2:y0,stroke:"#5B6CFF","stroke-width":1.5,"stroke-dasharray":"4 4",opacity:.6},this.dotG);
@@ -889,6 +934,7 @@ function signWord(v){return v>0?"正数 ✓":(v<0?"负数":"等于 0");}
   });
   var plot=new FnPlot(document.getElementById("lab3-plot"),{
     xmin:-4,xmax:5,ymax:10,
+    flatMin:{x1:-1,x2:2,y:3,label:"平底 = 最小值 3"},
     segs:[
       {from:-4,to:-1,color:"#FF7AB6",fn:f},
       {from:-1,to:2,color:"#E8B93C",fn:f},
@@ -898,18 +944,25 @@ function signWord(v){return v>0?"正数 ✓":(v<0?"负数":"等于 0");}
   var ro=document.getElementById("readout3");
   function update(x){
     var a=x+1,b=x-2,y=f(x);
-    var seg = x<-1 ? "neg" : (x<=2 ? "mid" : "pos");
     var segName = x<-1? "房间① x<−1" : (x<=2? "房间② −1≤x≤2" : "房间③ x>2");
     var segCls = x<-1? "neg" : (x<=2? "zero" : "pos");
-    var expr;
-    if(x<-1) expr="−(x+1)−(x−2) = −2x+1 = "+fmt(y);
-    else if(x<=2) expr="(x+1)−(x−2) = 3（常数！）";
-    else expr="(x+1)+(x−2) = 2x−1 = "+fmt(y);
+    var expr, minChip;
+    if(x<-1){
+      expr="−(x+1)−(x−2) = −2x+1 = "+fmt(y);
+      minChip=chip("📉 本段递减 → 越靠近 x=−1 越小，但取不到：y > 3，无最小值","neg");
+    }else if(x<=2){
+      expr="(x+1)−(x−2) = 3（常数！）";
+      minChip=chip("🏆 本段恒为 3，端点能取到 → 最小值 3 ✅","ok");
+    }else{
+      expr="(x+1)+(x−2) = 2x−1 = "+fmt(y);
+      minChip=chip("📈 本段递增 → 越靠近 x=2 越小，但取不到：y > 3，无最小值","pos");
+    }
     ro.innerHTML=
       chip(segName,segCls)+
       chip("x+1 = "+fmt(a)+"，"+signWord(a),sign(a))+
       chip("x−2 = "+fmt(b)+"，"+signWord(b),sign(b))+
-      chip("原式 = "+expr,segCls);
+      chip("原式 = "+expr,segCls)+
+      minChip;
   }
   ax.setX(-3);plot.setX(-3,f);
 })();
